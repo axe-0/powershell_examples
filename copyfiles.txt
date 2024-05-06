@@ -1,0 +1,34 @@
+# Path to the Excel spreadsheet
+$excelFilePath = "C:\path\to\your\spreadsheet.xlsx"
+
+# Create Excel object
+$excel = New-Object -ComObject Excel.Application
+$workbook = $excel.Workbooks.Open($excelFilePath)
+$worksheet = $workbook.Worksheets.Item(1)
+
+# Iterate through each row in the spreadsheet
+for ($i = 2; $i -le $worksheet.UsedRange.Rows.Count; $i++) {
+    # Get current and destination file paths from the spreadsheet
+    $currentFilePath = $worksheet.Cells.Item($i, 1).Text
+    $destinationFolderPath = $worksheet.Cells.Item($i, 2).Text
+    
+    # Check if the current file exists
+    if (Test-Path $currentFilePath -PathType Leaf) {
+        # Create the destination folder if it doesn't exist
+        if (-not (Test-Path $destinationFolderPath -PathType Container)) {
+            New-Item -Path $destinationFolderPath -ItemType Directory
+        }
+        
+        # Copy the file to the destination folder
+        Copy-Item -Path $currentFilePath -Destination $destinationFolderPath -Force
+        Write-Host "Copied '$currentFilePath' to '$destinationFolderPath'"
+    } else {
+        Write-Host "File '$currentFilePath' not found."
+    }
+}
+
+# Close Excel
+$workbook.Close()
+$excel.Quit()
+[System.Runtime.Interopservices.Marshal]::ReleaseComObject($excel) | Out-Null
+
