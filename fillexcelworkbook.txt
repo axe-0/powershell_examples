@@ -1,0 +1,52 @@
+# Create a new Excel application object
+$excel = New-Object -ComObject Excel.Application
+
+# Make Excel visible (optional)
+$excel.Visible = $true
+
+# Open the client data Excel file
+$clientDataWorkbook = $excel.Workbooks.Open("C:\path\to\client_data.xlsx")
+
+# Get the active worksheet from the client data workbook
+$clientDataWorksheet = $clientDataWorkbook.ActiveSheet
+
+# Define the row and column numbers for data extraction
+$clientNameColumn = 1  # Adjust column number as needed
+$clientDataColumn = 2  # Adjust column number as needed
+$templateFilePathColumn = 3  # Adjust column number as needed
+
+# Find the last row with data in the client data worksheet
+$lastRow = $clientDataWorksheet.UsedRange.Rows.Count
+
+# Iterate through each row in the client data worksheet
+for ($i = 2; $i -le $lastRow; $i++) {
+    # Get client data from each row
+    $clientName = $clientDataWorksheet.Cells.Item($i, $clientNameColumn).Text
+    $clientData = $clientDataWorksheet.Cells.Item($i, $clientDataColumn).Text
+    $templateFilePath = $clientDataWorksheet.Cells.Item($i, $templateFilePathColumn).Text
+
+    # Open the Excel form template using the template file path from the data file
+    $formTemplateWorkbook = $excel.Workbooks.Open($templateFilePath)
+    $formTemplateWorksheet = $formTemplateWorkbook.ActiveSheet
+
+    # Populate the form template worksheet with client data
+    $formTemplateWorksheet.Cells.Item(4, 3).Value = $clientName  # C4
+    $formTemplateWorksheet.Cells.Item(5, 3).Value = $clientData  # C5
+
+    # Save the form template workbook with client data
+    $outputFilePath = "C:\path\to\output\$clientName_form.xlsx"
+    $formTemplateWorkbook.SaveAs($outputFilePath)
+
+    # Close the form template workbook
+    $formTemplateWorkbook.Close()
+}
+
+# Close the client data workbook
+$clientDataWorkbook.Close()
+
+# Quit Excel application
+$excel.Quit()
+
+# Release COM objects
+[System.Runtime.Interopservices.Marshal]::ReleaseComObject($excel) | Out-Null
+
