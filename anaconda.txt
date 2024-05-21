@@ -73,3 +73,11 @@ Anaconda setup
 
 Modules to Install 
 
+        conda install -c conda-forge jupyter_contrib_nbextensions
+
+        jupyter contrib nbextension install –-user
+
+        
+
+
+
