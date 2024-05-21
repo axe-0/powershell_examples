@@ -77,7 +77,14 @@ Modules to Install
 
         jupyter contrib nbextension install –-user
 
-        
+        If you're behind a firewall or proxy that intercepts SSL connections, you may need to use the --trusted-host option to specify trusted hosts. For example:
+
+        sh
+        Copy code
+        pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host=files.pythonhosted.org jupyter_contrib_nbextensions
+        Replace pypi.org, pypi.python.org, and files.pythonhosted.org with the appropriate trusted hosts.
+
+
 
 
 
